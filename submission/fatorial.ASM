@@ -1,34 +1,31 @@
-; Programa incial 
-@               /0000
-LD              /N
-MM              /N_decrementado
-JZ              /000A
-MM              /RES 
-SC              /000E
-HM              /0000
-
+; Programa principal
+@ /0000
+k/ 8100   ; AC ← [0x0100]  (N)
+k/ 9034   ; [0x0034] ← AC  (armazenar N em “N_decrementado”)
+k/ 100A   ; Se AC == 0, pula para 0x000A 
+k/ 9102   ; [0x0102] ← AC  (inicializa “N!” com N)
+k/ A00E   ; Chama a sub‐rotina (endereço 0x000F)
+k/ C000   ; Fim do programa principal
 
 ; Sub‐rotina para cálculo do fatorial
-@               /000E
-JP              /0000
-LD              /N_decrementado
-SB              /0032
-JZ              /0020
-MM              /N_decrementado
-LD              /RES
-ML              /N_decrementado
-MM              /RES
-JP              /0010
-RS              /000E
+@ 000E
+k/ 0000
+k/ 8034   ; AC ← [0x0034]  (carrega o contador “N_decrementado”)
+k/ 5032   ; AC ← AC – [0x0032]  (subtrai 1)
+k/ 1020   ; Se AC == 0 (ou seja, se o contador era 1) então pula para 0x0026 (retorna)
+k/ 9034   ; [0x0034] ← AC  (atualiza “N_decrementado” com o novo valor)
+k/ 8102   ; AC ← [0x0102]  (carrega o fatorial parcial)
+k/ 6034   ; AC ← AC × [0x0034]  (multiplica pelo contador atualizado)
+k/ 9102   ; [0x0102] ← AC  (atualiza o fatorial parcial)
+k/ 0010   ; Pula para 0x0010 (início do laço da sub‐rotina)
+k/ B00E   ; Retorna da sub‐rotina
 
+; Dados e constantes
+@ 0032
+k/ 0001   ; Constante 1
+k/ 0000   ; Variável “N_decrementado”
 
-;dados constantes
-@               /0032 ; 
-i               /0001 ;  constante 1
-N_decrementado  /0000
-
-
-; valores inicias em memoria 
-@               /0100
-N               K/0003
-RES             K/0001
+; Valores iniciais em memória
+@ 0100
+N  K = 1   ; Valor de N (exemplo: 3)
+RES K = 1   ; Valor inicial de “N!” (já que 0! = 1)
